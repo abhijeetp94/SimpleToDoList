@@ -5,11 +5,15 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
 <BorderPane fx:controller="TheToDoList.Controller"
             xmlns:fx="http://javafx.com/fxml">
     <left>
-        <ListView>
+        <ListView fx:id="toDoItemListView" onMouseClicked="#handleSelectedItem">
 
         </ListView>
     </left>
+    <center>
+        <TextArea/>
+    </center>
 </BorderPane>
