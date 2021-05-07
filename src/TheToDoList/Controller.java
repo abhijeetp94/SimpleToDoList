@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextArea;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -16,6 +17,8 @@ public class Controller {
     private List<ToDoItem> toDoList;
     @FXML
     private ListView<ToDoItem> toDoItemListView;
+    @FXML
+    private TextArea selectedTextArea;
 
     public void initialize(){
         toDoList = new ArrayList<>();
@@ -39,6 +42,8 @@ public class Controller {
     public void handleSelectedItem(){
         ToDoItem item = toDoItemListView.getSelectionModel().getSelectedItem();
         System.out.println("Selected Item is " + item.getTitle());
+        selectedTextArea.setText(item.getDescription() +
+                "\n\n\n\nDue Date:\n" + item.getDeadline().toString());
     }
 
 
