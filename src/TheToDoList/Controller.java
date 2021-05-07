@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +25,7 @@ public class Controller {
     @FXML
     private Button editDetails, successDetails, cancelDetails;
 
-    public void initialize(){
+    public void initialize(){                                            // Initialize method to initialize the application
         toDoList = new ArrayList<>();
         toDoList.add(new ToDoItem("Submit Assignment",
                 "Submit the assignment of chapter 4 of maths",
@@ -37,35 +38,36 @@ public class Controller {
                 LocalDate.of(2021, Month.MAY, 8)));
         toDoList.add(new ToDoItem("Write Blog",
                 "Write a weblog for the blogspot account of Astrowing MNNIT.",
-                LocalDate.of(2021, Month.MAY, 12)));
-        dueDateLabel.setText("NA");
+                LocalDate.of(2021, Month.MAY, 12))); // Hard Coded info
+//        dueDateLabel.setText("NA");
         toDoItemListView.getItems().setAll(toDoList);
         toDoItemListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         toDoItemListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ToDoItem>() {
             @Override
-            public void changed(ObservableValue<? extends ToDoItem> observableValue, ToDoItem toDoItem, ToDoItem t1) {
+            public void changed(ObservableValue<? extends ToDoItem> observableValue, ToDoItem toDoItem, ToDoItem t1) { // Custom Listener for List View Selection
                 ToDoItem item = toDoItemListView.getSelectionModel().getSelectedItem();
                 if(item != null){
                     selectedTextArea.setText(item.getDescription());
-                    dueDateLabel.setText(item.getDeadline().toString());
+                    DateTimeFormatter df = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+                    dueDateLabel.setText(df.format(item.getDeadline())); // setting the text for selected Item
                     editDetails.setDisable(false);
                 }
             }
         });
         editDetails.setDisable(true);
-        toDoItemListView.getSelectionModel().selectFirst();
+        toDoItemListView.getSelectionModel().selectFirst();  // Select the first Item while opening
     }
 
 
     @FXML
     public void onButtonClicked(ActionEvent e){
-        if (e.getSource().equals(editDetails)){
+        if (e.getSource().equals(editDetails)){                // Event Handler or Listener for edit details button
             selectedTextArea.setEditable(true);
             editDetails.setVisible(false);
             successDetails.setVisible(true);
             cancelDetails.setVisible(true);
         }
-        if (e.getSource().equals(successDetails)){
+        if (e.getSource().equals(successDetails)){             // Event Handler or Listener for Done button
             String s = selectedTextArea.getText();
             toDoItemListView.getSelectionModel().getSelectedItem().setDescription(s);
             int index = toDoList.indexOf(toDoItemListView.getSelectionModel().getSelectedItem());
@@ -75,7 +77,7 @@ public class Controller {
             successDetails.setVisible(false);
             cancelDetails.setVisible(false);
         }
-        if (e.getSource().equals(cancelDetails)){
+        if (e.getSource().equals(cancelDetails)){               // Event Handler or Listener for Cancel button
             selectedTextArea.setText(toDoItemListView.getSelectionModel().getSelectedItem().getDescription());
             selectedTextArea.setEditable(false);
             editDetails.setVisible(true);
