@@ -3,9 +3,7 @@ package TheToDoList;
 import TheToDoList.DataView.ToDoItem;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -19,6 +17,10 @@ public class Controller {
     private ListView<ToDoItem> toDoItemListView;
     @FXML
     private TextArea selectedTextArea;
+    @FXML
+    private Label dueDateLabel;
+    @FXML
+    private Button editDetails, successDetails, cancelDetails;
 
     public void initialize(){
         toDoList = new ArrayList<>();
@@ -34,16 +36,46 @@ public class Controller {
         toDoList.add(new ToDoItem("Write Blog",
                 "Write a weblog for the blogspot account of Astrowing MNNIT.",
                 LocalDate.of(2021, Month.MAY, 12)));
-
+        dueDateLabel.setText("NA");
         toDoItemListView.getItems().setAll(toDoList);
         toDoItemListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        editDetails.setDisable(true);
     }
     @FXML
     public void handleSelectedItem(){
         ToDoItem item = toDoItemListView.getSelectionModel().getSelectedItem();
-        System.out.println("Selected Item is " + item.getTitle());
-        selectedTextArea.setText(item.getDescription() +
-                "\n\n\n\nDue Date:\n" + item.getDeadline().toString());
+//        System.out.println("Selected Item is " + item.getTitle());
+        selectedTextArea.setText(item.getDescription());
+        dueDateLabel.setText(item.getDeadline().toString());
+        editDetails.setDisable(false);
+    }
+
+    @FXML
+    public void onButtonClicked(ActionEvent e){
+        if (e.getSource().equals(editDetails)){
+            selectedTextArea.setEditable(true);
+            editDetails.setVisible(false);
+            successDetails.setVisible(true);
+            cancelDetails.setVisible(true);
+        }
+        if (e.getSource().equals(successDetails)){
+            String s = selectedTextArea.getText();
+            toDoItemListView.getSelectionModel().getSelectedItem().setDescription(s);
+            int index = toDoList.indexOf(toDoItemListView.getSelectionModel().getSelectedItem());
+            toDoList.get(index).setDescription(s);
+            selectedTextArea.setEditable(false);
+            editDetails.setVisible(true);
+            successDetails.setVisible(false);
+            cancelDetails.setVisible(false);
+        }
+        if (e.getSource().equals(cancelDetails)){
+            selectedTextArea.setText(toDoItemListView.getSelectionModel().getSelectedItem().getDescription());
+            selectedTextArea.setEditable(false);
+            editDetails.setVisible(true);
+            successDetails.setVisible(false);
+            cancelDetails.setVisible(false);
+        }
+
     }
 
 
