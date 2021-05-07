@@ -1,6 +1,8 @@
 package TheToDoList;
 
 import TheToDoList.DataView.ToDoItem;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -39,16 +41,21 @@ public class Controller {
         dueDateLabel.setText("NA");
         toDoItemListView.getItems().setAll(toDoList);
         toDoItemListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        toDoItemListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ToDoItem>() {
+            @Override
+            public void changed(ObservableValue<? extends ToDoItem> observableValue, ToDoItem toDoItem, ToDoItem t1) {
+                ToDoItem item = toDoItemListView.getSelectionModel().getSelectedItem();
+                if(item != null){
+                    selectedTextArea.setText(item.getDescription());
+                    dueDateLabel.setText(item.getDeadline().toString());
+                    editDetails.setDisable(false);
+                }
+            }
+        });
         editDetails.setDisable(true);
+        toDoItemListView.getSelectionModel().selectFirst();
     }
-    @FXML
-    public void handleSelectedItem(){
-        ToDoItem item = toDoItemListView.getSelectionModel().getSelectedItem();
-//        System.out.println("Selected Item is " + item.getTitle());
-        selectedTextArea.setText(item.getDescription());
-        dueDateLabel.setText(item.getDeadline().toString());
-        editDetails.setDisable(false);
-    }
+
 
     @FXML
     public void onButtonClicked(ActionEvent e){
