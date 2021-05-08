@@ -33,9 +33,11 @@ public class ToDoData {
         return itemList;
     }
 
-    public void setItemList(List<ToDoItem> itemList) {
-        this.itemList = itemList;
-    }
+//    public void setItemList(List<ToDoItem> itemList) {
+//        this.itemList = itemList;
+//    }
+
+    public void addToDoItem(ToDoItem item){ this.itemList.add(item); }
 
     public void loadData() throws IOException {
         itemList = FXCollections.observableArrayList();

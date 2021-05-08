@@ -1,4 +1,7 @@
 Submit Assignment	Submit the assignment of chapter 4 of maths...	09-05-2021
-Make Project	Start Building the project on java	11-05-2021
+Make Project	Start Building the project on javafx and networking	11-05-2021
 Give Contest	There is a codeforces contest of division 2 you should give it. (Completed)	08-05-2021
 Write Blog	Write a weblog for the blogspot account of Astrowing MNNIT.	12-05-2021
+Added Item	This is an added item just to verify if it's working	08-06-2021
+A second added	A second added item to check if it is working in the real time or not.	30-06-2021
+Item another	Checking for the selection model if its working fine or not.	20-05-2021
