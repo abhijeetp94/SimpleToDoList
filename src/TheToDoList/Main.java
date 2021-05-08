@@ -1,11 +1,14 @@
 package TheToDoList;
 
+import TheToDoList.DataView.ToDoData;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class Main extends Application {
 
@@ -21,5 +24,24 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        try{
+            ToDoData.getInstance().storeData();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void init() throws Exception {
+        try {
+            ToDoData.getInstance().loadData();
+        }catch (IOException ie){
+            ie.printStackTrace();
+        }
     }
 }

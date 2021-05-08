@@ -1,5 +1,6 @@
 package TheToDoList;
 
+import TheToDoList.DataView.ToDoData;
 import TheToDoList.DataView.ToDoItem;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -7,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -26,22 +28,26 @@ public class Controller {
     private Button editDetails, successDetails, cancelDetails;
 
     public void initialize(){                                            // Initialize method to initialize the application
-        toDoList = new ArrayList<>();
-        toDoList.add(new ToDoItem("Submit Assignment",
-                "Submit the assignment of chapter 4 of maths",
-                LocalDate.of(2021, Month.MAY, 9)));
-        toDoList.add(new ToDoItem("Make Project",
-                "Start Building the project",
-                LocalDate.of(2021, Month.MAY, 11)));
-        toDoList.add(new ToDoItem("Give Contest",
-                "There is a codeforces contest of division 2 you should give it.",
-                LocalDate.of(2021, Month.MAY, 8)));
-        toDoList.add(new ToDoItem("Write Blog",
-                "Write a weblog for the blogspot account of Astrowing MNNIT.",
-                LocalDate.of(2021, Month.MAY, 12))); // Hard Coded info
+        toDoList = ToDoData.getInstance().getItemList();
+//        toDoList.add(new ToDoItem("Submit Assignment",
+//                "Submit the assignment of chapter 4 of maths",
+//                LocalDate.of(2021, Month.MAY, 9)));
+//        toDoList.add(new ToDoItem("Make Project",
+//                "Start Building the project",
+//                LocalDate.of(2021, Month.MAY, 11)));
+//        toDoList.add(new ToDoItem("Give Contest",
+//                "There is a codeforces contest of division 2 you should give it.",
+//                LocalDate.of(2021, Month.MAY, 8)));
+//        toDoList.add(new ToDoItem("Write Blog",
+//                "Write a weblog for the blogspot account of Astrowing MNNIT.",
+//                LocalDate.of(2021, Month.MAY, 12))); // Hard Coded info
 //        dueDateLabel.setText("NA");
-        toDoItemListView.getItems().setAll(toDoList);
-        toDoItemListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+//        toDoItemListView.getItems().setAll(toDoList);
+//        ToDoData.getInstance().setItemList(toDoList);
+//        ToDoData.getInstance().loadData();
+
+
+        // =============================================================================================================================================
         toDoItemListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ToDoItem>() {
             @Override
             public void changed(ObservableValue<? extends ToDoItem> observableValue, ToDoItem toDoItem, ToDoItem t1) { // Custom Listener for List View Selection
@@ -54,6 +60,10 @@ public class Controller {
                 }
             }
         });
+        // =============================================================================================================================================
+
+        toDoItemListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        toDoItemListView.getItems().setAll(ToDoData.getInstance().getItemList());
         editDetails.setDisable(true);
         toDoItemListView.getSelectionModel().selectFirst();  // Select the first Item while opening
     }

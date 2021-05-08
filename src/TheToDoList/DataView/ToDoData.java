@@ -48,10 +48,12 @@ public class ToDoData {
                 String[] itemPieces = input.split("\t");
                 String title = itemPieces[0];
                 String description = itemPieces[1];
-                LocalDate deadline = LocalDate.parse(itemPieces[3], formatter);
+                String deadString = itemPieces[2];
+                LocalDate deadline = LocalDate.parse(deadString, formatter);
 
                 ToDoItem item = new ToDoItem(title, description, deadline);
                 itemList.add(item);
+//                System.out.println(item.getTitle());
             }
         } finally {
             if(br != null){
