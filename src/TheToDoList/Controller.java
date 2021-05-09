@@ -4,12 +4,20 @@ import TheToDoList.DataView.ToDoData;
 import TheToDoList.DataView.ToDoItem;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -21,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class Controller {
-    private List<ToDoItem> toDoList;
+    private ObservableList<ToDoItem> toDoList;
     @FXML
     private ListView<ToDoItem> toDoItemListView;
     @FXML
@@ -32,9 +40,23 @@ public class Controller {
     private Button editDetails, successDetails, cancelDetails;
     @FXML
     private BorderPane mainPageBorderPane;
+    @FXML
+    private ContextMenu contextMenu;
 
     public void initialize(){                                            // Initialize method to initialize the application
+        contextMenu = new ContextMenu();
+        MenuItem deleteItem = new MenuItem("Delete");
+        MenuItem editItem = new MenuItem("Edit");
         toDoList = ToDoData.getInstance().getItemList();
+        contextMenu.getItems().setAll(deleteItem, editItem);
+
+        deleteItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                ToDoItem item = toDoItemListView.getSelectionModel().getSelectedItem();
+                deleteSelectedItem(item);
+            }
+        });
 
         // =============================================================================================================================================
         toDoItemListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ToDoItem>() {
@@ -52,9 +74,60 @@ public class Controller {
         // =============================================================================================================================================
 
         toDoItemListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        toDoItemListView.getItems().setAll(ToDoData.getInstance().getItemList());
+        toDoItemListView.setItems(toDoList);
         editDetails.setDisable(true);
         toDoItemListView.getSelectionModel().selectFirst();  // Select the first Item while opening
+
+        // custom cell factory for the list view
+        // ==============================================================================================================================================
+        toDoItemListView.setCellFactory(new Callback<ListView<ToDoItem>, ListCell<ToDoItem>>() {
+            @Override
+            public ListCell<ToDoItem> call(ListView<ToDoItem> toDoItemListView) {
+                ListCell<ToDoItem> cell = new ListCell<>(){
+                    @Override
+                    protected void updateItem(ToDoItem toDoItem, boolean b) {
+                        super.updateItem(toDoItem, b);
+                        if(b){
+                            setText(null);
+//                            setBackground(super.getBackground());
+                        }
+                        else {
+                            setText(toDoItem.getTitle());
+                            setFont(new Font("Times New Roman", 16));
+                            if(toDoItem.getDeadline().compareTo(LocalDate.now()) <= 0 && !(isEmpty())){
+                                setBackground(new Background(new BackgroundFill(Color.WHEAT, new CornerRadii(5), null)));
+                                setTextFill(Color.RED);
+                                if(isSelected()){
+                                    setBackground(new Background(new BackgroundFill(Color.SKYBLUE, new CornerRadii(5), null)));
+                                }
+//                                setTextFill(Color.WHITE);setFont(new Font("Times New Roman bold"));
+                            } else if(toDoItem.getDeadline().equals(LocalDate.now().plusDays(1)) && !(isEmpty()) ){
+                                setBackground(new Background(new BackgroundFill(Color.PALEGREEN, new CornerRadii(5), null)));
+//                                setTextFill(Color.);
+                                if(isSelected()){
+                                    setBackground(new Background(new BackgroundFill(Color.SKYBLUE, new CornerRadii(5), null)));
+                                }
+                            }else {
+//                                setBackground(super.getBackground());
+                            }
+
+                        }
+                    }
+                };
+                cell.emptyProperty().addListener(
+                        (obs, wasEmpty, isEmpty) -> {
+                            if(isEmpty){
+                                cell.setContextMenu(null);
+                            }
+                            else {
+                                cell.setContextMenu(contextMenu);
+                            }
+                        }
+                );
+                return cell;
+            }
+        });
+        // ==============================================================================================================================================
     }
 
 
@@ -106,13 +179,20 @@ public class Controller {
         if(result.isPresent() && (result.get() == ButtonType.OK)){   // Handle if Ok button is pressed
             newItemController controller = fxmlLoader.getController();
             ToDoItem item = controller.processResults();  // processing the result from the dialog controller
-            toDoItemListView.getItems().setAll(toDoList);   // setting newly added item to list view
-//            toDoItemListView.getItems().indexOf(item);
             toDoItemListView.getSelectionModel().select(item);  // selecting the newly added item
-            System.out.println("Okay button Pressed");
         }
-        else if(result.isPresent() && (result.get() == ButtonType.CANCEL)){
-            System.out.println("Cancel button Pressed");
+
+    }
+
+    public void deleteSelectedItem(ToDoItem item){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Delete Item");
+        alert.setHeaderText("Delete: " + item.getTitle());
+        alert.setContentText("Are you sure?");
+
+        Optional<ButtonType> res = alert.showAndWait();
+        if(res.isPresent() && res.get()==ButtonType.OK){
+            toDoList.remove(item);
         }
     }
 

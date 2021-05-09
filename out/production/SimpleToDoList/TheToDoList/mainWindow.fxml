@@ -31,7 +31,7 @@
     </left>
     <center>
         <VBox>
-            <TextArea fx:id="selectedTextArea" editable="false" VBox.vgrow="ALWAYS" />
+            <TextArea fx:id="selectedTextArea" editable="false" VBox.vgrow="ALWAYS" wrapText="true" />
             <HBox style="-fx-background-color: white" >
                 <Label text="Due Date: ">
                     <font>
