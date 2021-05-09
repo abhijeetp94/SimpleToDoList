@@ -13,19 +13,33 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <BorderPane fx:id="mainPageBorderPane" fx:controller="TheToDoList.Controller"
             xmlns:fx="http://javafx.com/fxml">
     <top>
-        <MenuBar>
-            <Menu text="File">
-                <MenuItem text="New Item" onAction="#handleNewItem" />
-                <SeparatorMenuItem/>
-                <MenuItem text="Exit"/>
-            </Menu>
-        </MenuBar>
+        <VBox>
+
+            <MenuBar>
+                <Menu text="File">
+                    <MenuItem text="New Item" onAction="#handleNewItem" />
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Exit"/>
+                </Menu>
+            </MenuBar>
+            <ToolBar>
+                <HBox>
+                    <Button text="New" onAction="#handleNewItem">
+                        <tooltip>
+                            <Tooltip text="Add a New Item"/>
+                        </tooltip>
+                    </Button>
+                </HBox>
+            </ToolBar>
+        </VBox>
     </top>
     <left>
-        <ListView fx:id="toDoItemListView">
+        <ListView fx:id="toDoItemListView" onKeyPressed="#handleKeyPressed">
 
         </ListView>
     </left>

@@ -11,6 +11,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
@@ -193,6 +195,15 @@ public class Controller {
         Optional<ButtonType> res = alert.showAndWait();
         if(res.isPresent() && res.get()==ButtonType.OK){
             toDoList.remove(item);
+        }
+    }
+
+    public void handleKeyPressed(KeyEvent e){
+        if(toDoItemListView.getSelectionModel().getSelectedItem() != null){
+            if(e.getCode() == KeyCode.DELETE){
+                ToDoItem item = toDoItemListView.getSelectionModel().getSelectedItem();
+                deleteSelectedItem(item);
+            }
         }
     }
 
