@@ -5,6 +5,7 @@ import TheToDoList.DataView.ToDoItem;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -25,10 +26,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Controller {
     private ObservableList<ToDoItem> toDoList;
@@ -75,8 +73,14 @@ public class Controller {
         });
         // =============================================================================================================================================
 
+        SortedList<ToDoItem> sortedList = new SortedList<>(toDoList, new Comparator<ToDoItem>() {
+            @Override
+            public int compare(ToDoItem o1, ToDoItem o2) {
+                return o1.getDeadline().compareTo(o2.getDeadline());
+            }
+        });
         toDoItemListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        toDoItemListView.setItems(toDoList);
+        toDoItemListView.setItems(sortedList);
         editDetails.setDisable(true);
         toDoItemListView.getSelectionModel().selectFirst();  // Select the first Item while opening
 
