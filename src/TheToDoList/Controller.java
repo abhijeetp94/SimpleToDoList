@@ -2,9 +2,11 @@ package TheToDoList;
 
 import TheToDoList.DataView.ToDoData;
 import TheToDoList.DataView.ToDoItem;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,6 +29,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class Controller {
     private ObservableList<ToDoItem> toDoList;
@@ -42,6 +45,11 @@ public class Controller {
     private BorderPane mainPageBorderPane;
     @FXML
     private ContextMenu contextMenu;
+    @FXML
+    private ToggleButton filterButton;
+
+    private FilteredList<ToDoItem> filteredList;
+    private Predicate<ToDoItem> getAllItems, getTodayItems;
 
     public void initialize(){                                            // Initialize method to initialize the application
         contextMenu = new ContextMenu();
@@ -50,6 +58,8 @@ public class Controller {
         toDoList = ToDoData.getInstance().getItemList();
         contextMenu.getItems().setAll(deleteItem, editItem);
 
+        // event handler for delete and Edit item
+        // =============================================================================================================================================
         deleteItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -57,7 +67,17 @@ public class Controller {
                 deleteSelectedItem(item);
             }
         });
+        editItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                ToDoItem item = toDoItemListView.getSelectionModel().getSelectedItem();
+                handleEditItem(item);
+            }
+        });
+        // =============================================================================================================================================
 
+
+        // event handler for selected item
         // =============================================================================================================================================
         toDoItemListView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<ToDoItem>() {
             @Override
@@ -73,7 +93,22 @@ public class Controller {
         });
         // =============================================================================================================================================
 
-        SortedList<ToDoItem> sortedList = new SortedList<>(toDoList, new Comparator<ToDoItem>() {
+        // predicate to get all available items
+        getAllItems = new Predicate<ToDoItem>() {
+            @Override
+            public boolean test(ToDoItem toDoItem) {
+                return true;
+            }
+        };
+        // predicate to get item due today
+        getTodayItems = new Predicate<ToDoItem>() {
+            @Override
+            public boolean test(ToDoItem toDoItem) {
+                return toDoItem.getDeadline().equals(LocalDate.now());
+            }
+        };
+        filteredList = new FilteredList<>(toDoList, getAllItems);
+        SortedList<ToDoItem> sortedList = new SortedList<>(filteredList, new Comparator<ToDoItem>() {
             @Override
             public int compare(ToDoItem o1, ToDoItem o2) {
                 return o1.getDeadline().compareTo(o2.getDeadline());
@@ -101,22 +136,11 @@ public class Controller {
                             setText(toDoItem.getTitle());
                             setFont(new Font("Times New Roman", 16));
                             if(toDoItem.getDeadline().compareTo(LocalDate.now()) <= 0 && !(isEmpty())){
-                                setBackground(new Background(new BackgroundFill(Color.WHEAT, new CornerRadii(5), null)));
                                 setTextFill(Color.RED);
-                                if(isSelected()){
-                                    setBackground(new Background(new BackgroundFill(Color.SKYBLUE, new CornerRadii(5), null)));
-                                }
 //                                setTextFill(Color.WHITE);setFont(new Font("Times New Roman bold"));
                             } else if(toDoItem.getDeadline().equals(LocalDate.now().plusDays(1)) && !(isEmpty()) ){
-                                setBackground(new Background(new BackgroundFill(Color.PALEGREEN, new CornerRadii(5), null)));
-//                                setTextFill(Color.);
-                                if(isSelected()){
-                                    setBackground(new Background(new BackgroundFill(Color.SKYBLUE, new CornerRadii(5), null)));
-                                }
-                            }else {
-//                                setBackground(super.getBackground());
+                                setTextFill(Color.DEEPPINK);
                             }
-
                         }
                     }
                 };
@@ -190,6 +214,7 @@ public class Controller {
 
     }
 
+    // method to delete the selected item
     public void deleteSelectedItem(ToDoItem item){
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Delete Item");
@@ -202,6 +227,7 @@ public class Controller {
         }
     }
 
+    // handle delete key pressed
     public void handleKeyPressed(KeyEvent e){
         if(toDoItemListView.getSelectionModel().getSelectedItem() != null){
             if(e.getCode() == KeyCode.DELETE){
@@ -211,5 +237,60 @@ public class Controller {
         }
     }
 
+    // event handler for filtering the list
+    public void handleFilterButton(){
+        ToDoItem item = toDoItemListView.getSelectionModel().getSelectedItem();
+        if(filterButton.isSelected()){
+            filteredList.setPredicate(getTodayItems);
+            if(filteredList.isEmpty()){
+                selectedTextArea.clear();
+                dueDateLabel.setText("NA");
+            }
+            if(filteredList.contains(item)){
+                toDoItemListView.getSelectionModel().select(item);
+            }
+            else{
+                toDoItemListView.getSelectionModel().selectFirst();
+            }
+        }
+        else {
+            filteredList.setPredicate(getAllItems);
+            toDoItemListView.getSelectionModel().select(item);
+        }
+    }
+
+    // event handler to exit the button
+    public void handleExit(){
+        Platform.exit();
+    }
+
+    // edit items
+    public void handleEditItem(ToDoItem item){
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(mainPageBorderPane.getScene().getWindow());
+        dialog.setTitle("Edit Item");
+        dialog.getDialogPane().setHeaderText("Edit Item");
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("newItemDialog.fxml"));
+        try {
+
+            dialog.getDialogPane().setContent(loader.load());
+        } catch (IOException ie){
+            ie.printStackTrace();
+        }
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+        newItemController controller = loader.getController();
+        controller.setData(item);
+        Optional<ButtonType> result = dialog.showAndWait();
+
+        if(result.isPresent() && result.get()==ButtonType.OK){
+            ToDoItem updatedItem = controller.updateResults();
+            int index = toDoList.indexOf(item);
+            toDoList.set(index, updatedItem);
+
+        }
+
+    }
 
 }

@@ -15,6 +15,7 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.ToggleButton?>
 <BorderPane fx:id="mainPageBorderPane" fx:controller="TheToDoList.Controller"
             xmlns:fx="http://javafx.com/fxml">
     <top>
@@ -24,7 +25,7 @@
                 <Menu text="File">
                     <MenuItem text="New Item" onAction="#handleNewItem" />
                     <SeparatorMenuItem/>
-                    <MenuItem text="Exit"/>
+                    <MenuItem text="Exit" onAction="#handleExit"/>
                 </Menu>
             </MenuBar>
             <ToolBar>
@@ -34,6 +35,11 @@
                             <Tooltip text="Add a New Item"/>
                         </tooltip>
                     </Button>
+                    <ToggleButton fx:id="filterButton" text="Filter Items" onAction="#handleFilterButton">
+                        <tooltip>
+                            <Tooltip text="Filter Items for today (On = Today's Items &amp; Off = All Items)"/>
+                        </tooltip>
+                    </ToggleButton>
                 </HBox>
             </ToolBar>
         </VBox>
