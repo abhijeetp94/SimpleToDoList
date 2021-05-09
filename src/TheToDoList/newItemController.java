@@ -28,4 +28,17 @@ public class newItemController {
         ToDoData.getInstance().addToDoItem(item);
         return item;
     }
+    public void setData(ToDoItem item){
+        titleField.setText(item.getTitle());
+        descField.setText(item.getDescription());
+        deadlineField.setValue(item.getDeadline());
+    }
+    public ToDoItem updateResults(){          // processing the instructions typed
+        String title = titleField.getText().trim();
+        String description = descField.getText().trim();
+        LocalDate deadline = deadlineField.getValue();
+        ToDoItem item = new ToDoItem(title, description, deadline);
+//        ToDoData.getInstance().addToDoItem(item);
+        return item;
+    }
 }

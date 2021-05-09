@@ -13,25 +13,45 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.control.ToggleButton?>
 <BorderPane fx:id="mainPageBorderPane" fx:controller="TheToDoList.Controller"
             xmlns:fx="http://javafx.com/fxml">
     <top>
-        <MenuBar>
-            <Menu text="File">
-                <MenuItem text="New Item" onAction="#handleNewItem" />
-                <SeparatorMenuItem/>
-                <MenuItem text="Exit"/>
-            </Menu>
-        </MenuBar>
+        <VBox>
+
+            <MenuBar>
+                <Menu text="File">
+                    <MenuItem text="New Item" onAction="#handleNewItem" />
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Exit" onAction="#handleExit"/>
+                </Menu>
+            </MenuBar>
+            <ToolBar>
+                <HBox>
+                    <Button text="New" onAction="#handleNewItem">
+                        <tooltip>
+                            <Tooltip text="Add a New Item"/>
+                        </tooltip>
+                    </Button>
+                    <ToggleButton fx:id="filterButton" text="Filter Items" onAction="#handleFilterButton">
+                        <tooltip>
+                            <Tooltip text="Filter Items for today (On = Today's Items &amp; Off = All Items)"/>
+                        </tooltip>
+                    </ToggleButton>
+                </HBox>
+            </ToolBar>
+        </VBox>
     </top>
     <left>
-        <ListView fx:id="toDoItemListView">
+        <ListView fx:id="toDoItemListView" onKeyPressed="#handleKeyPressed">
 
         </ListView>
     </left>
     <center>
         <VBox>
-            <TextArea fx:id="selectedTextArea" editable="false" VBox.vgrow="ALWAYS" />
+            <TextArea fx:id="selectedTextArea" editable="false" VBox.vgrow="ALWAYS" wrapText="true" />
             <HBox style="-fx-background-color: white" >
                 <Label text="Due Date: ">
                     <font>

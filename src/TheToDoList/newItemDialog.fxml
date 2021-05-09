@@ -19,7 +19,7 @@
             <Label text="Title" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
             <TextField fx:id="titleField" GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.columnSpan="2" />
             <Label text="Description" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-            <TextArea fx:id="descField" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="2"/>
+            <TextArea fx:id="descField" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="2" wrapText="true"/>
             <Label text="Date" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
             <DatePicker fx:id="deadlineField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 

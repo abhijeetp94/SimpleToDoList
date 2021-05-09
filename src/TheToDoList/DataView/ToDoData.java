@@ -1,6 +1,7 @@
 package TheToDoList.DataView;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,7 +19,7 @@ public class ToDoData {
     private static ToDoData instance = new ToDoData();
     private static String filename = "datafile.txt";
     private static String fileLocation = "../../Resources/datafile.txt";
-    private List<ToDoItem> itemList;
+    private ObservableList<ToDoItem> itemList;
     private DateTimeFormatter formatter;
 
     private ToDoData(){
@@ -29,7 +30,7 @@ public class ToDoData {
         return instance;
     }
 
-    public List<ToDoItem> getItemList() {
+    public ObservableList<ToDoItem> getItemList() {
         return itemList;
     }
 
